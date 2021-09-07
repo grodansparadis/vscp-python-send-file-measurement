@@ -81,19 +81,23 @@ for line in sys.stdin:
 
     strvalue = line;
 
-    event = "3,"		# Priority=normal
-    event += "1040,"		# Level II measurement (string)
-    event += type + ","		# Event type
-    event += ","		# DateTime
-    event += "0,"		# Use interface timestamp
-    event += "0,"  		# Use obid of interface
-    event += guid 		# add GUID to event
+    event = "3,"		                # Priority=normal
+    event += "1040,"		            # Level II measurement (string)
+    event += type + ","		          # Event type
+    event += ","		                # DateTime
+    event += "0,"		                # Use interface timestamp
+    event += "0,"  		              # Use obid of interface
+    event += guid + "," 	          # add GUID to event
+    event += str(sensorindex) + "," # add sensor index to event
+    event += str(zone) + ","		    # add zone to event
+    event += str(subzone) + ","	    # add subzone to event
+    event += str(unit) 		          # add unit to event
 
     # Write temperature into the event (not line breaks)
     for ch in strvalue:
-        if  ( ( 0x0a != ord(ch) ) and ( 0x0d != ord(ch) ) ):
-            event += ","
-            event += hex(ord(ch)) 
+      if  ( ( 0x0a != ord(ch) ) and ( 0x0d != ord(ch) ) ):
+        event += ","
+        event += hex(ord(ch)) 
 
     # Send event to server
     print("event=" + event)
