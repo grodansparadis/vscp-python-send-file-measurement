@@ -5,7 +5,7 @@
 // Usage: echo 1.45 | send_file_measurement.py host user password guid type unit sensorindex zone subzone
 // class is always = 1040 (str measurement)
 //
-// Described here https://github.com/grodansparadis/vscp-samples/tree/master/samples/python
+// Described here ihttps://github.com/grodansparadis/vscp-python-send-file_measurement
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ tn = telnetlib.Telnet(host, 9598)
 tn.read_until("+OK".encode('ascii'),2)
 
 # Login
-tn.write("user " .encode('ascii') + user.encode('ascii') + "\n".encode('ascii'))
+tn.write("user ".encode('ascii') + user.encode('ascii') + "\n".encode('ascii'))
 tn.read_until("+OK".encode('ascii'), 2)
 
 tn.write("pass " .encode('ascii') + password .encode('ascii') + "\n".encode('ascii'))
