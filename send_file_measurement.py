@@ -83,10 +83,10 @@ for line in sys.stdin:
 
     event = "3,"		                # Priority=normal
     event += "1040,"		            # Level II measurement (string)
-    event += type + ","		          # Event type
-    event += ","		                # DateTime
-    event += "0,"		                # Use interface timestamp
+    event += type + ","		          # Event type    
     event += "0,"  		              # Use obid of interface
+    event += ","		                # DateTime
+    event += "0,"		                # Timestamp
     event += guid + "," 	          # add GUID to event
     event += str(sensorindex) + "," # add sensor index to event
     event += str(zone) + ","		    # add zone to event
