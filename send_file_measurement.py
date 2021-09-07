@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 // File: send_file_measurement.py
 //
@@ -26,6 +27,7 @@
 // the Free Software Foundation, 59 Temple Place - Suite 330,
 // Boston, MA 02111-1307, USA.
 //
+// LOG_FORMAT "%R %.2C"
 //
 
 """
@@ -61,66 +63,42 @@ if ( len(sys.argv) > 9 ):
     subzone = sys.argv[9]
 
 
-import getpass
-import sys
-import telnetlib
 
-# host user password guid type unit sensorindex zone, subzone
-if ( len(sys.argv) < 6 ):
-    sys.exit("Wrong number of parameters - aborting")
+# Conncet to VSCP daemon
+tn = telnetlib.Telnet(host, 9598)
+tn.read_until("+OK".encode('ascii'),2)
 
-host = sys.argv[1]
-user = sys.argv[2]
-password = sys.argv[3]
-guid = sys.argv[4]
-type = sys.argv[5]
+# Login
+tn.write("user " .encode('ascii') + user.encode('ascii') + "\n".encode('ascii'))
+tn.read_until("+OK".encode('ascii'), 2)
 
-unit = 0
-if ( len(sys.argv) > 6 ):
-    unit = sys.argv[6]
+tn.write("pass " .encode('ascii') + password .encode('ascii') + "\n".encode('ascii'))
 
-sensorindex = 0
-if ( len(sys.argv) > 7 ):
-    sensorindex = sys.argv[7]
+tn.read_until("+OK - Success.".encode('ascii'),2)
 
-zone = 0
-if ( len(sys.argv) > 8 ):
-    zone = sys.argv[8]
+# For each line from piped digitemp output
+for line in sys.stdin:
 
-subzone = 0
-if ( len(sys.argv) > 9 ):
-    subzone = sys.argv[9]
+    strvalue = line;
 
-import getpass
-import sys
-import telnetlib
+    event = "3,"		# Priority=normal
+    event += "1040,"		# Level II measurement (string)
+    event += type + ","		# Event type
+    event += ","		# DateTime
+    event += "0,"		# Use interface timestamp
+    event += "0,"  		# Use obid of interface
+    event += guid 		# add GUID to event
 
-# host user password guid type unit sensorindex zone, subzone
-if ( len(sys.argv) < 6 ):
-    sys.exit("Wrong number of parameters - aborting")
+    # Write temperature into the event (not line breaks)
+    for ch in strvalue:
+        if  ( ( 0x0a != ord(ch) ) and ( 0x0d != ord(ch) ) ):
+            event += ","
+            event += hex(ord(ch)) 
 
-host = sys.argv[1]
-user = sys.argv[2]
-password = sys.argv[3]
-guid = sys.argv[4]
-type = sys.argv[5]
+    # Send event to server
+    print("event=" + event)
+    tn.write("send " .encode('ascii') + event .encode('ascii') + "\n".encode('ascii')) 
+    tn.read_until("+OK - Success.".encode('ascii'),2)
 
-unit = 0
-if ( len(sys.argv) > 6 ):
-    unit = sys.argv[6]
-
-sensorindex = 0
-if ( len(sys.argv) > 7 ):
-    sensorindex = sys.argv[7]
-
-zone = 0
-if ( len(sys.argv) > 8 ):
-    zone = sys.argv[8]
-
-subzone = 0
-if ( len(sys.argv) > 9 ):
-    subzone = sys.argv[9]
-
-
-
+tn.write("quit\n".encode('ascii'))
 
