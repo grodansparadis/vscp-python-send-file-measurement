@@ -1,0 +1,2 @@
+#!/bin/bash
+cat /sys/bus/w1/devices/28-000005482bc1/temperature | ./send_file_measurement.py 192.168.1.7 admin secret FF:FF:FF:FF:FF:FF:FF:FE:60:E3:27:1D:75:C3:00:03 6 1
