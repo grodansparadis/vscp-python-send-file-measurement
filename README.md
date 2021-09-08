@@ -28,15 +28,24 @@ For example a one wire temperature sensor on a Raspberry Pi can be read from
 ```
 /sys/bus/w1/devices/28-000004d9b8ff/temperature
 ```
+
+The problem is that you can't send it directly to the server as th erea dtemperatur is 1000 time stha actual value. So we use some bash arithmetic and execute in place to get the correct value.
+
+```
+printf %.3f "$((10**3 * `cat /sys/bus/w1/devices/28-000004d9b8ff/temperature`/1000))e-3"
+```
+
 so 
 
 ```
-cat /sys/bus/w1/devices/28-000004d9b8ff/temperature | ./sendfile_measurement.py 192.167.1.7 admin secret 6 1
+printf %.3f "$((10**3 * `cat /sys/bus/w1/devices/28-000004d9b8ff/temperature`/1000))e-3" | ./sendfile_measurement.py 192.167.1.7 admin secret 6 1
 ```
 
 will send a [temperature measurement event](https://grodansparadis.github.io/vscp-doc-spec/#/./class2.measurement_str?id=type6) to the VSCP daemon at address _192.168.1.7_. 
 
 typically used in a cron job.
+
+Read more about [bash arithmetic's here](https://www.shell-tips.com/bash/math-arithmetic-calculation/).
 
 ----
 
